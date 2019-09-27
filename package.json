@@ -1,0 +1,43 @@
+{
+	"name": "webos-auto-notification",
+	"version": "0.1.0",
+	"description": "System notification application for webOS Auto",
+	"author": "",
+	"main": "src/index.js",
+	"scripts": {
+		"serve": "enact serve",
+		"pack": "enact pack",
+		"pack-p": "enact pack -p",
+		"watch": "enact pack --watch",
+		"clean": "enact clean",
+		"lint": "enact lint --strict .",
+		"license": "enact license",
+		"test": "echo \"No test suite\" && exit 0",
+		"test-watch": "enact test --watch"
+	},
+	"license": "Apache-2.0",
+	"private": true,
+	"repository": "https://github.com/enyojs/webos-auto-notification.git",
+	"enact": {
+		"theme": "agate"
+	},
+	"eslintConfig": {
+		"extends": "enact/strict"
+	},
+	"eslintIgnore": [
+		"node_modules/*",
+		"build/*",
+		"dist/*"
+	],
+	"dependencies": {
+		"@enact/agate": "enactjs/agate#develop",
+		"@enact/core": "^3.0.0",
+		"@enact/i18n": "^3.0.0",
+		"@enact/spotlight": "^3.0.0",
+		"@enact/ui": "^3.0.0",
+		"@enact/webos": "^3.0.0",
+		"prop-types": "^15.6.2",
+		"react": "^16.8.0",
+		"react-dom": "^16.8.0"
+	}
+}
