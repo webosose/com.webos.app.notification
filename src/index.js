@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 import App from './App';
 
 const appElement = (
-	<App />
+	<App skin="gallium-night" />
 );
 
 // In a browser environment, render instead of exporting

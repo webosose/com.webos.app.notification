@@ -1,0 +1,35 @@
+// NotificationContainer.module.less
+//
+
+@notification-height: 110px;
+@notification-padding: 30px 60px;
+@notification-margin: 40px;
+
+.enact-fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.notificationContainerTransition {
+	&,
+	.inner {
+		.enact-fit();
+	}
+}
+
+.notificationContainerTransition {
+	bottom: auto;
+	// Add up all of the sizing measurements to assign the true height of this container
+	height: (@notification-margin + extract(@notification-padding, 1) + @notification-height + extract(@notification-padding, 1) + @notification-margin);
+
+	.notificationContainer {
+		height: @notification-height;
+		padding: @notification-padding;
+		border-radius: 12px;
+		margin: @notification-margin;
+		background-color: white;
+	}
+}

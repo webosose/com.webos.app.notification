@@ -1,12 +1,22 @@
 {
-	"id": "com.webos.app.notification",
-	"version": "0.1.0",
-	"vendor": "LGE-SVL",
-	"type": "web",
-	"main": "index.html",
-	"title": "Home",
-	"icon": "icon.png",
-	"miniicon": "icon-mini.png",
-	"largeIcon": "icon-large.png",
-	"uiRevision": 2
+  "id": "com.webos.app.notification",
+  "version": "0.1.0",
+  "vendor": "LGE-SWP",
+  "type": "web",
+  "main": "index.html",
+  "title": "Enact Notification",
+  "icon": "icon.png",
+  "miniicon": "icon-mini.png",
+  "largeIcon": "icon-large.png",
+  "transparent": true,
+  "defaultWindowType": "system_ui",
+  "visible": false,
+  "lockable": false,
+  "noSplashOnLaunch": true,
+  "supportQuickStart": false,
+  "trustLevel": "trusted",
+  "accessibility": {
+    "supportsAudioGuidance": true
+  },
+  "uiRevision": 2
 }

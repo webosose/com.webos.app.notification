@@ -1,0 +1,81 @@
+// NotificationControl.module.less
+//
+
+@notification-content-size: 110px;
+@notificaiion-content-padding: 60px;
+@notification-icon-size: 52px;
+@notification-icon-padding: calc((@notification-content-size - @notification-icon-size) / 2);
+@notification-font-size: 40px;
+
+.notificationControl {
+	height: 100%;
+
+	> * + * {
+		padding-left: @notificaiion-content-padding;
+	}
+
+	.iconContainer {
+		width: @notification-content-size;
+		height: @notification-content-size;
+
+		&::before {
+			position: absolute;
+			content: '';
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			background: #373737;
+		}
+
+		> * {
+			width: @notification-icon-size;
+			height: @notification-icon-size;
+			margin: @notification-icon-padding;
+		}
+	}
+
+	.dividerContainer {
+		&::before {
+			position: absolute;
+			content: '';
+			width: 1px;
+			height: @notification-content-size;
+			background: #8a8a8a;
+		}
+	}
+
+	.textContainer {
+		& > * {
+			height: @notification-content-size;
+			padding: 0;
+
+			font-size: @notification-font-size;
+			font-weight: bold;
+			font-style: normal;
+			font-stretch: normal;
+			line-height: normal;
+			letter-spacing: normal;
+			color: black;
+		}
+	}
+
+	.textArea {
+		position: relative;
+
+		& > * {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+
+			& > * {
+				max-height: @notification-content-size;
+				overflow: hidden;
+			}
+		}
+	}
+}
