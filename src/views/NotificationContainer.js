@@ -12,6 +12,7 @@ const delayTohide = 1500;
 
 class NotificationContainerBase extends React.Component {
 	static propTypes = {
+		index: PropTypes.string,
 		onHideNotification: PropTypes.func,
 		onPopNotification: PropTypes.func,
 		onShowNotification: PropTypes.func,
@@ -20,24 +21,24 @@ class NotificationContainerBase extends React.Component {
 	}
 
 	componentDidMount () {
-		this.props.onShowNotification();
+		this.props.onShowNotification({index: this.props.index});
 		this.hideTimerId = setTimeout(this.hideNotificationContainer, delayTohide);
 	}
 
 	componentWillUnmount () {
 		if (this.hideTimerId) {
-			clearTimeout(this.hideNotificationContainer);
+			clearTimeout(this.hideTimerId);
 		}
 	}
 
 	hideTimerId = null
 
 	hideNotificationContainer = () => {
-		this.props.onHideNotification();
+		this.props.onHideNotification({index: this.props.index});
 	}
 
 	handleHide = () => {
-		this.props.onPopNotification();
+		this.props.onPopNotification({index: this.props.index});
 	}
 
 	render () {
@@ -65,24 +66,30 @@ class NotificationContainerBase extends React.Component {
 const NotificationContainerDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onHideNotification: (ev, props, {update}) => {
+			onHideNotification: ({index}, props, {update}) => {
 				update(state => {
-					state.app.notification[props.index].visible = false;
+					state.app.notification[index].visible = false;
 				});
 			},
-			onPopNotification: (ev, props, {update}) => {
+			onPopNotification: ({index}, props, {update}) => {
 				update(state => {
-					delete state.app.notification[props.index];
+					delete state.app.notification[index];
+
+					if (typeof state.app.notification.length === 'undefined') {
+						// The following code is commented to test easily
+						// because no {keepAlive: true } option could be for a test app.
+						// We need to activate it later.
+						// window.close();
+					}
 				});
 			},
-			onShowNotification: (ev, props, {update}) => {
+			onShowNotification: ({index}, props, {update}) => {
 				update(state => {
-					state.app.notification[props.index].visible = true;
+					state.app.notification[index].visible = true;
 				});
 			}
 		},
 		mapStateToProps: ({app}, props) => ({
-			index: props.index,
 			text: app.notification[props.index].text,
 			visible: app.notification[props.index].visible
 		})

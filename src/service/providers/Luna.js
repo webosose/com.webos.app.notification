@@ -12,13 +12,13 @@ const handler = (callback, map = fwd) => callback && (res => {
 	}
 });
 
-const luna =  (
+const luna = (
 		service,
 		method,
-		{subscribe = false, timeout = 0, ...params} = {},
+		{timeout = 0, ...params} = {},
 		map
 ) => (
-	({onSuccess, onFailure, onTimeout, onComplete, ...additionalParams} = {}) => {
+	({onSuccess, onFailure, onTimeout, onComplete, subscribe = false, ...additionalParams} = {}) => {
 		const req = new LS2Request();
 		req.send({
 			service: 'luna://' + service,
@@ -38,7 +38,16 @@ const luna =  (
 // For full spec and accepted options, see:
 // https://wiki.lgsvl.com/display/webOSDocs/com.webos.service.applicationmanager+v4.1
 const LunaProvider = {
-	getNotification: luna('com.webos.notification', 'getNotification') // subscribable
+	// com.webos.notification
+	getAlertNotification: luna('com.webos.notification', 'getAlertNotification'), // subscribable
+	getInputAlertNotification: luna('com.webos.notification', 'getInputAlertNotification'), // subscribable
+	getPincodePromptNotification: luna('com.webos.notification', 'getPincodePromptNotification'), // subscribable
+	getToastNotification: luna('com.webos.notification', 'getToastNotification'), // subscribable
+
+	// com.webos.service.applicationmanager
+	// FIXME: Remove the `getForegroundAppInfo` method if the others could be subscribed.
+	// getForegroundAppInfo: luna('com.webos.service.applicationmanager', 'getForegroundAppInfo'), // subscribable
+	launch: luna('com.webos.service.applicationmanager', 'launch', {id: 'com.webos.app.enactsampler'})
 };
 
 export default LunaProvider;
