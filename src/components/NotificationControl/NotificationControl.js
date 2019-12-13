@@ -24,10 +24,6 @@ const NotificationControlBase = kind({
 		text: PropTypes.string
 	},
 
-	defaultProps: {
-		text: ''
-	},
-
 	styles: {
 		css,
 		className: 'notificationControl'

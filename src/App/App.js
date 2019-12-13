@@ -8,11 +8,13 @@ import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
 
-import Service, {
+import {
 	__MOCK__,
-	cancelAllRequests,
+	Application,
+	Notification,
+	cancelRequest,
 	requests
-} from '../service';
+} from 'webos-auto-service';
 import NotificationContainer from '../views/NotificationContainer';
 
 import initialState from './initialState';
@@ -37,21 +39,30 @@ class AppBase extends React.Component {
 
 	componentDidMount () {
 		subscribedLunaServiceList.forEach(service => {
-			requests[service.method] = Service[service.method]({
+			// FIXME: Remove the following code for the `getForegroundAppInfo` method if Notification services could be subscribed by an app
+			// const method = (service.method === 'getForegroundAppInfo') ? Application[service.method] : Notification[service.method];
+			const method = Notification[service.method];
+
+			requests[service.method] = method({
 				onSuccess: (param) => (this.handleSuccess({text: param && param[service.keyValue]})),
 				onFailure: this.handleFailure,
+				onComplete: () => {
+					cancelRequest(service.keyValue);
+				},
 				subscribe: true
 			});
 		});
 	}
 
 	componentWillUnmount () {
-		cancelAllRequests();
+		// FIXME: Remove the following code for the `getForegroundAppInfo` method if Notification services could be subscribed by an app
+		// Application.cancelAllRequests();
+		Notification.cancelAllRequests();
 	}
 
 	handleSuccess = ({text}) => {
 		if (document.hidden) {
-			Service.launch();
+			Application.launch({id: 'com.webos.app.notification'});
 		}
 
 		if (text) {

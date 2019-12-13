@@ -26,10 +26,12 @@
 	height: (@notification-margin + extract(@notification-padding, 1) + @notification-height + extract(@notification-padding, 1) + @notification-margin);
 
 	.notificationContainer {
+		background-color: #ededed;
 		height: @notification-height;
 		padding: @notification-padding;
+		border: solid 3px #c9c9c9;
 		border-radius: 20px;
 		margin: @notification-margin;
-		background-color: white;
+		box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.13);
 	}
 }
