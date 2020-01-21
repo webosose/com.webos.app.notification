@@ -11,12 +11,13 @@
   "transparent": true,
   "defaultWindowType": "system_ui",
   "visible": false,
-  "lockable": false,
   "noSplashOnLaunch": true,
+  "lockable": false,
   "supportQuickStart": false,
   "trustLevel": "trusted",
   "accessibility": {
     "supportsAudioGuidance": true
   },
+  "requiredPermissions": ["all"],
   "uiRevision": 2
 }

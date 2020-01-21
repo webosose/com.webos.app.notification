@@ -22,11 +22,9 @@ import initialState from './initialState';
 import css from './App.module.less';
 
 const subscribedLunaServiceList = [
-	{method: 'getAlertNotification', keyValue: 'alertInfo'},
-	// FIXME: Remove the `getForegroundAppInfo` method if the others could be subscribed.
-	// {method: 'getForegroundAppInfo', keyValue: 'appId'},
-	{method: 'getInputAlertNotification', keyValue: 'alertInfo'},
-	{method: 'getPincodePromptNotification', keyValue: 'pincodePromptInfo'},
+	{method: 'getAlertNotification', keyValue: 'alertAction'},
+	{method: 'getInputAlertNotification', keyValue: 'alertAction'},
+	{method: 'getPincodePromptNotification', keyValue: 'pincodePromptAction'},
 	{method: 'getToastNotification', keyValue: 'message'}
 ];
 
@@ -39,12 +37,18 @@ class AppBase extends React.Component {
 
 	componentDidMount () {
 		subscribedLunaServiceList.forEach(service => {
-			// FIXME: Remove the following code for the `getForegroundAppInfo` method if Notification services could be subscribed by an app
-			// const method = (service.method === 'getForegroundAppInfo') ? Application[service.method] : Notification[service.method];
 			const method = Notification[service.method];
 
 			requests[service.method] = method({
-				onSuccess: (param) => (this.handleSuccess({text: param && param[service.keyValue]})),
+				onSuccess: (param) => {
+					const text = param && param[service.keyValue] || '';
+
+					if (text !== '') {
+						return this.handleSuccess({text});
+					} else {
+						return true;
+					}
+				},
 				onFailure: this.handleFailure,
 				onComplete: () => {
 					cancelRequest(service.keyValue);
@@ -55,8 +59,6 @@ class AppBase extends React.Component {
 	}
 
 	componentWillUnmount () {
-		// FIXME: Remove the following code for the `getForegroundAppInfo` method if Notification services could be subscribed by an app
-		// Application.cancelAllRequests();
 		Notification.cancelAllRequests();
 	}
 

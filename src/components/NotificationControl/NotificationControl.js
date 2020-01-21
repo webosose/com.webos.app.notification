@@ -33,7 +33,7 @@ const NotificationControlBase = kind({
 		return (
 			<Row {...rest}>
 				<Cell className={css.iconContainer} shrink>
-					<Icon size="large">{'pairing'/* TBD: Need to update an icon */}</Icon>
+					<Icon size="large">notification</Icon>
 				</Cell>
 				<Cell className={css.dividerContainer} shrink />
 				<Cell className={css.textContainer}>
