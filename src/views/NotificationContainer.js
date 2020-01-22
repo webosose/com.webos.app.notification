@@ -8,7 +8,7 @@ import NotificationControl from '../components/NotificationControl';
 
 import css from './NotificationContainer.module.less';
 
-const delayTohide = 1500;
+const delayTohide = 5000;
 
 class NotificationContainerBase extends React.Component {
 	static propTypes = {
@@ -54,7 +54,15 @@ class NotificationContainerBase extends React.Component {
 		delete rest.onShowNotification;
 
 		return (
-			<Transition css={css} direction="up" timingFunction="ease-out" className={css.notificationContainerTransition} visible={visible} onHide={this.handleHide}>
+			<Transition
+				className={css.notificationContainerTransition}
+				css={css}
+				direction="up"
+				onHide={this.handleHide}
+				timingFunction="ease-out"
+				type={visible ? 'slide' : 'fade'}
+				visible={visible}
+			>
 				<div {...rest} className={css.notificationContainer}>
 					<NotificationControl text={text} />
 				</div>
@@ -89,9 +97,9 @@ const NotificationContainerDecorator = compose(
 				});
 			}
 		},
-		mapStateToProps: ({app}, props) => ({
-			text: app.notification[props.index].text,
-			visible: app.notification[props.index].visible
+		mapStateToProps: ({app}, {index}) => ({
+			text: app.notification[index].text,
+			visible: app.notification[index].visible
 		})
 	})
 );
