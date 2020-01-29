@@ -1,6 +1,6 @@
 {
 	"name": "com.webos.app.notification",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "webOS Enact system notification",
 	"author": "LG SWP",
 	"main": "src/index.js",
