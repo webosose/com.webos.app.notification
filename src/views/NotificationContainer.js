@@ -8,8 +8,6 @@ import NotificationControl from '../components/NotificationControl';
 
 import css from './NotificationContainer.module.less';
 
-const delayTohide = 5000;
-
 class NotificationContainerBase extends React.Component {
 	static propTypes = {
 		index: PropTypes.string,
@@ -19,22 +17,8 @@ class NotificationContainerBase extends React.Component {
 		text: PropTypes.string,
 		visible: PropTypes.bool
 	}
-
 	componentDidMount () {
 		this.props.onShowNotification({index: this.props.index});
-		this.hideTimerId = setTimeout(this.hideNotificationContainer, delayTohide);
-	}
-
-	componentWillUnmount () {
-		if (this.hideTimerId) {
-			clearTimeout(this.hideTimerId);
-		}
-	}
-
-	hideTimerId = null
-
-	hideNotificationContainer = () => {
-		this.props.onHideNotification({index: this.props.index});
 	}
 
 	handleHide = () => {
@@ -74,16 +58,18 @@ class NotificationContainerBase extends React.Component {
 const NotificationContainerDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onHideNotification: ({index}, props, {update}) => {
-				update(state => {
-					state.app.notification[index].visible = false;
-				});
-			},
 			onPopNotification: ({index}, props, {update}) => {
 				update(state => {
 					delete state.app.notification[index];
 
-					if (typeof state.app.notification.length === 'undefined') {
+					let cntNotificationLeft = 0;
+
+					// eslint-disable-next-line no-unused-vars
+					for (const key in state.app.notification) {
+						cntNotificationLeft++;
+					}
+
+					if (cntNotificationLeft === 0) {
 						window.close();
 					}
 				});

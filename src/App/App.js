@@ -27,13 +27,18 @@ const subscribedLunaServiceList = [
 	{method: 'getToastNotification', keyValue: 'message'}
 ];
 
+const delayToHideForFirstNotification = 5000; // ms
+const delayToHide = 1000; // ms
+
 class AppBase extends React.Component {
 	static propTypes = {
 		alertInfo: PropTypes.object,
 		notification: PropTypes.object,
+		onPushAlertNotification: PropTypes.func,
 		onHideAllNotification: PropTypes.func,
+		onHideNotification: PropTypes.func,
 		onPushNotification: PropTypes.func,
-		onPushAlertNotification: PropTypes.func
+		onTimer: PropTypes.func
 	}
 
 	componentDidMount () {
@@ -129,7 +134,7 @@ class AppBase extends React.Component {
 		}
 
 		if (text) {
-			this.props.onPushNotification({text});
+			this.props.onPushNotification({text, cbTimeout: this.cbTimeout});
 		} else {
 			console.error('The luna service data is not valid.'); // eslint-disable-line no-console
 		}
@@ -141,7 +146,13 @@ class AppBase extends React.Component {
 
 	// for develop
 	handlePushNotification = () => {
-		this.props.onPushNotification({text: 'Hello !'});
+		this.props.onPushNotification({text: 'Hello !', cbTimeout: this.cbTimeout});
+	}
+
+	cbTimeout = () => {
+		this.props.onHideNotification();
+
+		this.props.onTimer({cbTimeout: this.cbTimeout});
 	}
 
 	// for develop
@@ -182,8 +193,10 @@ class AppBase extends React.Component {
 			notificationControls = [],
 			alertInfoList = [];
 
+		delete rest.onHideNotification;
 		delete rest.onPushNotification;
 		delete rest.onPushAlertNotification;
+		delete rest.onTimer;
 
 		for (const key in notification) {
 			notificationControls.push(
@@ -243,10 +256,48 @@ const AppDecorator = compose(
 					}
 				});
 			},
-			onPushNotification: ({text}, props,  {update}) => {
+			onPushNotification: ({text, cbTimeout}, props,  {update}) => {
 				update(state => {
 					const key = window.performance.now() + '';
 					state.app.notification[key] = {key, visible: false, text};
+
+					if (state.app.timerId) {
+						clearTimeout(state.app.timerId);
+						state.app.timerId = null;
+					}
+
+					state.app.timerId = setTimeout(cbTimeout, delayToHideForFirstNotification);
+				});
+			},
+			onHideNotification: (context, props, {update}) => {
+				update(state => {
+					let cntNotificationLeft = 0;
+
+					// eslint-disable-next-line no-unused-vars
+					for (const key in state.app.notification) {
+						cntNotificationLeft++;
+					}
+
+					if (cntNotificationLeft === 0) {
+						return;
+					}
+
+					let keyToHide = null;
+
+					for (const key in state.app.notification) {
+						if (keyToHide === null || state.app.notification[keyToHide].key < state.app.notification[key].key) {
+							keyToHide = key;
+						}
+					}
+
+					if (keyToHide) {
+						state.app.notification[keyToHide].visible = false;
+					}
+				});
+			},
+			onTimer: ({cbTimeout}, props, {update}) => {
+				update(state => {
+					state.app.timerId = setTimeout(cbTimeout, delayToHide);
 				});
 			},
 			onPushAlertNotification: (ev, props, {update}) => {
