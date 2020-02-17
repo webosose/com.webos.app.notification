@@ -21,6 +21,7 @@ import NotificationContainer from '../views/NotificationContainer';
 import initialState from './initialState';
 
 import css from './App.module.less';
+import AlertPopup from '../components/AlertPopup';
 
 const subscribedLunaServiceList = [
 	{method: 'getToastNotification', keyValue: 'message'}
@@ -28,12 +29,15 @@ const subscribedLunaServiceList = [
 
 class AppBase extends React.Component {
 	static propTypes = {
+		alertInfo: PropTypes.object,
 		notification: PropTypes.object,
 		onHideAllNotification: PropTypes.func,
-		onPushNotification: PropTypes.func
+		onPushNotification: PropTypes.func,
+		onPushAlertNotification: PropTypes.func
 	}
 
 	componentDidMount () {
+		console.log("display - " + getDisplayAffinity());
 		subscribedLunaServiceList.forEach(service => {
 			const method = Notification[service.method];
 
@@ -53,6 +57,65 @@ class AppBase extends React.Component {
 				onFailure: this.handleFailure,
 				subscribe: true
 			});
+		});
+		/* getAlertNotification response sample
+		{
+			"alertInfo": {
+				"displayId": 0,
+				"message": "hello world",
+				"sourceId": "com.webos.lunasend-2782",
+				"isNotiSave": false,
+				"modal": false,
+				"isSysReq": false,
+				"onFailAction": {},
+				"buttons": [
+					{
+						"focus": false,
+						"action": {
+							"launchParams": {
+								"id": "com.webos.app.enactbrowser"
+							},
+							"serviceMethod": "launch",
+							"serviceURI": "luna://com.webos.service.applicationmanager/"
+						},
+						"label": "launch"
+					},
+					{
+						"focus": false,
+						"label": "close"
+					}
+				],
+				"onCloseAction": {},
+				"alertId": "com.webos.lunasend-2782-1581573178555"
+			},
+			"timestamp": "1581573178555",
+			"returnValue": true,
+			"alertAction": "open" or "close"
+		}
+		*/
+		requests['getAlertNotification'] = Notification.getAlertNotification({
+			subscribe: true,
+			onSuccess: (response) => {
+				if (!(response.returnValue) || !(response.hasOwnProperty('alertInfo'))) {
+					return;
+				}
+				const alertInfo = response.alertInfo;
+				if (getDisplayAffinity() !== ((alertInfo && alertInfo.hasOwnProperty('displayId')) ? alertInfo['displayId'] : 0)) {
+					return;
+				}
+				if (document.hidden) {
+					Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
+				}
+				// handle alert action - close
+				// update state to hidden and delete for matched alertId
+
+				this.props.onPushAlertNotification({
+					alertId: alertInfo.alertId,
+					message: alertInfo.message,
+					buttons: alertInfo.buttons
+				});
+			},
+			onFailure: this.handleFailure
 		});
 	}
 
@@ -76,8 +139,35 @@ class AppBase extends React.Component {
 		console.error(err); // eslint-disable-line no-console
 	}
 
+	// for develop
 	handlePushNotification = () => {
 		this.props.onPushNotification({text: 'Hello !'});
+	}
+
+	// for develop
+	handlePushAlertNotification = () => {
+		console.log("handlePushAlertNotification");
+		this.props.onPushAlertNotification({
+			alertId: 'test sample',
+			message: 'alert test message',
+			buttons: [
+				{
+					focus: false,
+					action: {
+						launchParams: {
+							"id": "com.webos.app.enactbrowser"
+						},
+						serviceMethod: "launch",
+						serviceURI: "luna://com.webos.service.applicationmanager/"
+					},
+					label: "launch"
+				},
+				{
+					focus: false,
+					label: "close"
+				}
+			]
+		});
 	}
 
 	render () {
@@ -85,17 +175,27 @@ class AppBase extends React.Component {
 			{
 				className,
 				notification,
+				alertInfo,
 				onHideAllNotification,
 				...rest
 			} = this.props,
-			notificationControls = [];
+			notificationControls = [],
+			alertInfoList = [];
 
 		delete rest.onPushNotification;
+		delete rest.onPushAlertNotification;
 
 		for (const key in notification) {
 			notificationControls.push(
-				<NotificationContainer key={notification[key].key} index={notification[key].key} text={notification[key].text} visible={notification[key].visible} />
+				<NotificationContainer key={notification[key].key} index={notification[key].key}/>
 			);
+		}
+
+		for (const key in alertInfo) {
+			alertInfoList.push(
+				<AlertPopup key={alertInfo[key].alertId} alertId={alertInfo[key].alertId}/>
+			);
+			console.log("alertInfoList length = " + alertInfoList.length);
 		}
 
 		return (
@@ -109,10 +209,12 @@ class AppBase extends React.Component {
 						{/* These are just for a development aid */}
 						<Button onClick={this.handlePushNotification}>Subscribe Notification</Button>
 						{/* End dev aids */}
+						<Button onClick={this.handlePushAlertNotification}>Show Alert</Button>
 					</div>
 				)}
 				<React.Fragment>
 					{notificationControls}
+					{alertInfoList}
 				</React.Fragment>
 			</div>
 		);
@@ -128,6 +230,11 @@ const AppDecorator = compose(
 		state: initialState()
 	}),
 	ConsumerDecorator({
+		mount: () => {
+			document.addEventListener('webOSLocaleChange', () => {
+				window.location.reload();
+			});
+		},
 		handlers: {
 			onHideAllNotification: (ev, props, {update}) => {
 				update(state => {
@@ -141,10 +248,17 @@ const AppDecorator = compose(
 					const key = window.performance.now() + '';
 					state.app.notification[key] = {key, visible: false, text};
 				});
+			},
+			onPushAlertNotification: (ev, props, {update}) => {
+				let {alertId, message, buttons} = ev;
+				update(state => {
+					state.app.alertInfo[alertId] = {alertId, message, buttons, visible: true};
+				});
 			}
 		},
 		mapStateToProps: ({app}) => ({
-			notification: app.notification
+			notification: app.notification,
+			alertInfo: app.alertInfo
 		})
 	})
 );
