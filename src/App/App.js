@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
+import getDisplayAffinity from 'webos-auto-service/utils/displayAffinity';
 
 import {
 	__MOCK__,
@@ -22,9 +23,6 @@ import initialState from './initialState';
 import css from './App.module.less';
 
 const subscribedLunaServiceList = [
-	{method: 'getAlertNotification', keyValue: 'alertAction'},
-	{method: 'getInputAlertNotification', keyValue: 'alertAction'},
-	{method: 'getPincodePromptNotification', keyValue: 'pincodePromptAction'},
 	{method: 'getToastNotification', keyValue: 'message'}
 ];
 
@@ -41,6 +39,9 @@ class AppBase extends React.Component {
 
 			requests[service.method] = method({
 				onSuccess: (param) => {
+					if (getDisplayAffinity() !== ((param && param.hasOwnProperty('displayId')) ? param['displayId'] : 0)) {
+						return;
+					}
 					const text = param && param[service.keyValue] || '';
 
 					if (text !== '') {
@@ -50,9 +51,6 @@ class AppBase extends React.Component {
 					}
 				},
 				onFailure: this.handleFailure,
-				onComplete: () => {
-					cancelRequest(service.keyValue);
-				},
 				subscribe: true
 			});
 		});
@@ -64,7 +62,7 @@ class AppBase extends React.Component {
 
 	handleSuccess = ({text}) => {
 		if (document.hidden) {
-			Application.launch({id: 'com.webos.app.notification'});
+			Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
 		}
 
 		if (text) {

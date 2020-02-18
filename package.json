@@ -44,7 +44,7 @@
 		"ramda": "^0.26.1",
 		"react": "^16.8.0",
 		"react-dom": "^16.8.0",
-		"webos-auto-service": "enyojs/webos-auto-service#0.4.0"
+		"webos-auto-service": "git+ssh://gpro.lge.com/webos-auto/nodejs-module-rse-common.git#submissions/2"
 	},
 	"devDependencies": {
 		"cross-env": "^5.2.1",
