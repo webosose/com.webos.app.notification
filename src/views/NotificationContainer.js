@@ -84,10 +84,7 @@ const NotificationContainerDecorator = compose(
 					delete state.app.notification[index];
 
 					if (typeof state.app.notification.length === 'undefined') {
-						// The following code is commented to test easily
-						// because no {keepAlive: true } option could be for a test app.
-						// We need to activate it later.
-						// window.close();
+						window.close();
 					}
 				});
 			},

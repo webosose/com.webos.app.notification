@@ -99,6 +99,9 @@ const AlertPopupDecorator = ConsumerDecorator({
 			// close & delete popup
 			update((state) => {
 				delete state.app.alertInfo[alertId];
+				if (typeof state.app.alertInfo.length === 'undefined') {
+					window.close();
+				}
 			});
 		}
 	},
