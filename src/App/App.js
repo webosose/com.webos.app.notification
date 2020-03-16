@@ -46,22 +46,24 @@ class AppBase extends React.Component {
 		subscribedLunaServiceList.forEach(service => {
 			const method = Notification[service.method];
 
-			requests[service.method] = method({
-				onSuccess: (param) => {
-					if (getDisplayAffinity() !== ((param && param.hasOwnProperty('displayId')) ? param['displayId'] : 0)) {
-						return;
-					}
-					const text = param && param[service.keyValue] || '';
+			if (!requests[service.method]) {
+				requests[service.method] = method({
+					onSuccess: (param) => {
+						if (getDisplayAffinity() !== ((param && param.hasOwnProperty('displayId')) ? param['displayId'] : 0)) {
+							return;
+						}
+						const text = param && param[service.keyValue] || '';
 
-					if (text !== '') {
-						return this.handleSuccess({text});
-					} else {
-						return true;
-					}
-				},
-				onFailure: this.handleFailure,
-				subscribe: true
-			});
+						if (text !== '') {
+							return this.handleSuccess({text});
+						} else {
+							return true;
+						}
+					},
+					onFailure: this.handleFailure,
+					subscribe: true
+				});
+			}
 		});
 		/* getAlertNotification response sample
 		{
@@ -98,34 +100,41 @@ class AppBase extends React.Component {
 			"alertAction": "open" or "close"
 		}
 		*/
-		requests['getAlertNotification'] = Notification.getAlertNotification({
-			subscribe: true,
-			onSuccess: (response) => {
-				if (!(response.returnValue) || !(response.hasOwnProperty('alertInfo'))) {
-					return;
-				}
-				const alertInfo = response.alertInfo;
-				if (getDisplayAffinity() !== ((alertInfo && alertInfo.hasOwnProperty('displayId')) ? alertInfo['displayId'] : 0)) {
-					return;
-				}
-				if (document.hidden) {
-					Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
-				}
-				// handle alert action - close
-				// update state to hidden and delete for matched alertId
+		if (!requests['getAlertNotification']) {
+			requests['getAlertNotification'] = Notification.getAlertNotification({
+				subscribe: true,
+				onSuccess: (response) => {
+					if (!(response.returnValue) || !(response.hasOwnProperty('alertInfo'))) {
+						return;
+					}
+					const alertInfo = response.alertInfo;
+					if (getDisplayAffinity() !== ((alertInfo && alertInfo.hasOwnProperty('displayId')) ? alertInfo['displayId'] : 0)) {
+						return;
+					}
+					if (document.hidden) {
+						Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
+					}
+					// handle alert action - close
+					// update state to hidden and delete for matched alertId
 
-				this.props.onPushAlertNotification({
-					alertId: alertInfo.alertId,
-					message: alertInfo.message,
-					buttons: alertInfo.buttons
-				});
-			},
-			onFailure: this.handleFailure
-		});
+					this.props.onPushAlertNotification({
+						alertId: alertInfo.alertId,
+						message: alertInfo.message,
+						buttons: alertInfo.buttons
+					});
+				},
+				onFailure: this.handleFailure
+			});
+		}
 	}
 
 	componentWillUnmount () {
-		Notification.cancelAllRequests();
+		// Notification.cancelAllRequests();
+		console.log("componentWillUnmount");
+		subscribedLunaServiceList.forEach(service => {
+			cancelRequest(service.method);
+		});
+		cancelRequest('getAlertNotification');
 	}
 
 	handleSuccess = ({text}) => {
@@ -244,6 +253,9 @@ const AppDecorator = compose(
 	}),
 	ConsumerDecorator({
 		mount: () => {
+			const currentDisplayId = getDisplayAffinity();
+			document.title = `${document.title} - Display ${currentDisplayId}`;
+
 			document.addEventListener('webOSLocaleChange', () => {
 				window.location.reload();
 			});
