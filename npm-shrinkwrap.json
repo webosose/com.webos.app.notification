@@ -2893,14 +2893,6 @@
 				"loose-envify": "^1.0.0"
 			}
 		},
-		"webos-auto-service": {
-			"version": "git+ssh://gpro.lge.com/webos-auto/nodejs-module-rse-common.git#8ca45063030c698b5c20bdc1c5675f99b5ab89c2",
-			"from": "git+ssh://gpro.lge.com/webos-auto/nodejs-module-rse-common.git#submissions/2",
-			"requires": {
-				"@enact/core": "^3.2.4",
-				"@enact/webos": "^3.2.4"
-			}
-		},
 		"whatwg-fetch": {
 			"version": "3.0.0",
 			"resolved": "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-3.0.0.tgz",

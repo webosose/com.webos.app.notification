@@ -1,11 +1,6 @@
 @import "~@enact/agate/styles/mixins.less";
 
 .app {
-	&.withBackground {
-		background-image:
-			linear-gradient(to bottom right, lighten(red, 20%), lighten(blue, 20%));
-	}
-
 	.transition {
 		pointer-events: none;
 
@@ -18,15 +13,5 @@
 		position: absolute;
 		.position(0);
 		background-image: linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.85) 9%, rgba(0, 0, 0, 0.48) 31%, rgba(0, 0, 0, 0) 69%);
-	}
-
-	.controls {
-		position: absolute;
-		bottom: 0;
-		padding: 40px;
-
-		& > * {
-			margin: 0;
-		}
 	}
 }

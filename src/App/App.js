@@ -1,21 +1,18 @@
 import AgateDecorator from '@enact/agate/AgateDecorator';
-import Button from '@enact/agate/Button';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import ProviderDecorator from '@enact/agate/data/ProviderDecorator';
 import Transition from '@enact/ui/Transition';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
-import getDisplayAffinity from 'webos-auto-service/utils/displayAffinity';
+import getDisplayAffinity from '../services/utils/displayAffinity';
 
 import {
-	__MOCK__,
 	Application,
 	Notification,
 	cancelRequest,
 	requests
-} from 'webos-auto-service';
+} from '../services';
 import NotificationContainer from '../views/NotificationContainer';
 
 import initialState from './initialState';
@@ -153,47 +150,15 @@ class AppBase extends React.Component {
 		console.error(err); // eslint-disable-line no-console
 	}
 
-	// for develop
-	handlePushNotification = () => {
-		this.props.onPushNotification({text: 'Hello !', cbTimeout: this.cbTimeout});
-	}
-
 	cbTimeout = () => {
 		this.props.onHideNotification();
 
 		this.props.onTimer({cbTimeout: this.cbTimeout});
 	}
 
-	// for develop
-	handlePushAlertNotification = () => {
-		console.log("handlePushAlertNotification");
-		this.props.onPushAlertNotification({
-			alertId: 'test sample',
-			message: 'alert test message',
-			buttons: [
-				{
-					focus: false,
-					action: {
-						launchParams: {
-							"id": "com.webos.app.enactbrowser"
-						},
-						serviceMethod: "launch",
-						serviceURI: "luna://com.webos.service.applicationmanager/"
-					},
-					label: "launch"
-				},
-				{
-					focus: false,
-					label: "close"
-				}
-			]
-		});
-	}
-
 	render () {
 		const
 			{
-				className,
 				notification,
 				alertInfo,
 				onHideAllNotification,
@@ -221,19 +186,10 @@ class AppBase extends React.Component {
 		}
 
 		return (
-			/* If this is running Mock data, remove the background, so this becomes an overlay app */
-			<div {...rest} className={classNames(className, css.app, __MOCK__ ? css.withBackground : null)}>
+			<div {...rest} className={css.app}>
 				<Transition css={css} type="fade" className={css.notificationContainerTransition} visible={Boolean(Object.keys(notification).length)}>
 					<div className={css.basement} onClick={onHideAllNotification} />
 				</Transition>
-				{__MOCK__ && (
-					<div className={css.controls}>
-						{/* These are just for a development aid */}
-						<Button onClick={this.handlePushNotification}>Subscribe Notification</Button>
-						{/* End dev aids */}
-						<Button onClick={this.handlePushAlertNotification}>Show Alert</Button>
-					</div>
-				)}
 				<React.Fragment>
 					{notificationControls}
 					{alertInfoList}

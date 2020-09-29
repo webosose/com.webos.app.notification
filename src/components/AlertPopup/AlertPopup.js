@@ -1,6 +1,5 @@
 import LabeledIconButton from '@enact/agate/LabeledIconButton';
 import PopupMenu from '@enact/agate/PopupMenu';
-import LS2Request from '@enact/webos/LS2Request';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import $L from '@enact/i18n/$L/$L';
 import Group from '@enact/ui/Group';
@@ -10,7 +9,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import css from './AlertPopup.module.less';
-import { __MOCK__ } from 'webos-auto-service';
 
 const SharedIconButtonProps = { backgroundOpacity: 'lightOpaque', inline: true, size: 'huge'};
 
@@ -85,16 +83,7 @@ const AlertPopupDecorator = ConsumerDecorator({
 			}
 			let action = state.app.alertInfo[alertId].buttons[ev.selected].action;
 			if (typeof action === 'object' && action.hasOwnProperty('serviceURI') && action.hasOwnProperty('serviceMethod')) {
-				if (!__MOCK__) {
-					const req = new LS2Request();
-					req.send({
-						service: action.serviceURI,
-						method: action.serviceMethod,
-						parameters: Object.assign({}, action.launchParams)
-					});
-				} else {
-					console.log("api call: " + action.serviceURI + action.serviceMethod);
-				}
+				console.log("api call: " + action.serviceURI + action.serviceMethod);
 			}
 			// close & delete popup
 			update((state) => {
