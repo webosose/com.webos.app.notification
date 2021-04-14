@@ -211,6 +211,9 @@ const AppDecorator = compose(
 		mount: () => {
 			const currentDisplayId = getDisplayAffinity();
 			document.title = `${document.title} - Display ${currentDisplayId}`;
+			document.addEventListener('webOSLocaleChange', () => {
+				window.location.reload();
+			});
 		},
 		handlers: {
 			onHideAllNotification: (ev, props, {update}) => {
