@@ -16,14 +16,14 @@ class NotificationContainerBase extends React.Component {
 		onShowNotification: PropTypes.func,
 		text: PropTypes.string,
 		visible: PropTypes.bool
-	}
+	};
 	componentDidMount () {
 		this.props.onShowNotification({index: this.props.index});
 	}
 
 	handleHide = () => {
 		this.props.onPopNotification({index: this.props.index});
-	}
+	};
 
 	render () {
 		const {
@@ -70,11 +70,11 @@ const NotificationContainerDecorator = compose(
 					}
 
 					if (cntNotificationLeft === 0) {
-						update(state => {
+						update(updateState => {
 							if (state.app.timerId) {
-								console.log('clearTimeout & make timerId null');
-								clearTimeout(state.app.timerId);
-								state.app.timerId = null;
+								// console.log('clearTimeout & make timerId null');
+								clearTimeout(updateState.app.timerId);
+								updateState.app.timerId = null;
 							}
 						});
 						window.close();

@@ -6,7 +6,7 @@ const BluetoothService = {
 		inputParam[address] = name;
 
 		let params = {
-			category: "Session" + displayId,
+			category: 'Session' + displayId,
 			settings: {
 				BTDevices: inputParam
 			}
@@ -16,7 +16,7 @@ const BluetoothService = {
 	},
 	getDevicesFromSettingsService: ({displayId, subscribe, ...rest}) => {
 		let params = {
-			category: "Session" + displayId,
+			category: 'Session' + displayId,
 			key: 'BTDevices',
 			subscribe: subscribe
 		};

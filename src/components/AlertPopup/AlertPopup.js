@@ -10,15 +10,15 @@ import PropTypes from 'prop-types';
 
 import css from './AlertPopup.module.less';
 
-const SharedIconButtonProps = { backgroundOpacity: 'lightOpaque', inline: true, size: 'huge'};
+const SharedIconButtonProps = {backgroundOpacity: 'lightOpaque', inline: true, size: 'huge'};
 
 const AlertPopupBase = kind({
 	name: 'AlertPopup',
 
 	propTypes: {
 		alertId: PropTypes.string,
-		message: PropTypes.string,
 		buttons: PropTypes.array,
+		message: PropTypes.string,
 		onClickButton: PropTypes.func,
 		visible: PropTypes.bool
 	},
@@ -29,7 +29,7 @@ const AlertPopupBase = kind({
 	},
 
 	computed: {
-		buttonList: ({ buttons, alertId }) => {
+		buttonList: ({buttons, alertId}) => {
 			return buttons.map(
 				(btn, index) => ({
 					key: alertId + '-btn-' + index,
@@ -38,14 +38,14 @@ const AlertPopupBase = kind({
 				})
 			);
 		},
-		selectedButton: ({ buttons }) => {
+		selectedButton: ({buttons}) => {
 			return buttons.findIndex(btn => btn.focus);
 		}
 	},
 
-	render: ({ buttonList, selectedButton, onClickButton, message, ...rest }) => {
+	render: ({buttonList, selectedButton, onClickButton, message, ...rest}) => {
 
-		const msgStyle={
+		const msgStyle = {
 			color: '#ffffff',
 			width: ri.scale(1300),
 			height: ri.scale(221),
@@ -76,25 +76,26 @@ const AlertPopupBase = kind({
 
 const AlertPopupDecorator = ConsumerDecorator({
 	handlers: {
-		onClickButton: (ev, { alertId }, { state, update }) => {
+		onClickButton: (ev, {alertId}, {state, update}) => {
 			if (typeof ev.selected !== 'number') {
-				console.error("type error : ev.selected is not number")
+				// console.error('type error : ev.selected is not number');
 				return;
 			}
 			let action = state.app.alertInfo[alertId].buttons[ev.selected].action;
-			if (typeof action === 'object' && action.hasOwnProperty('serviceURI') && action.hasOwnProperty('serviceMethod')) {
-				console.log("api call: " + action.serviceURI + action.serviceMethod);
+			if (typeof action === 'object' && action.Object.prototype.hasOwnProperty.call('serviceURI') && action.Object.prototype.hasOwnProperty.call('serviceMethod')) {
+				/* eslint-disable-next-line no-console */
+				console.log('api call: ' + action.serviceURI + action.serviceMethod);
 			}
 			// close & delete popup
-			update((state) => {
-				delete state.app.alertInfo[alertId];
-				if (typeof state.app.alertInfo.length === 'undefined') {
+			update((updateState) => {
+				delete updateState.app.alertInfo[alertId];
+				if (typeof updateState.app.alertInfo.length === 'undefined') {
 					window.close();
 				}
 			});
 		}
 	},
-	mapStateToProps: ({ app }, { alertId }) => ({
+	mapStateToProps: ({app}, {alertId}) => ({
 		message: app.alertInfo[alertId].message,
 		buttons: app.alertInfo[alertId].buttons,
 		visible: app.alertInfo[alertId].visible

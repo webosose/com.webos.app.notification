@@ -2,7 +2,7 @@
 
 import {forward} from '@enact/core/handle';
 
-import {findAdapterAddress} from './utils/bluetoothAddress';
+// import {findAdapterAddress} from './utils/bluetoothAddress';
 import {canConnectDevice, isAudioDevice} from './utils/bluetoothProfiles';
 
 class RequestProxy {

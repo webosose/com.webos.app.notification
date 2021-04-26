@@ -13,7 +13,7 @@ export const PROFILE_ERROR = {
 	INVALID_STATE: 108,
 	INVALID_CITY: 109,
 	INVALID_ADDRESSLINE1: 110,
-	INVALID_ADDRESSLINE2: 111,
+	INVALID_ADDRESSLINE2: 111
 };
 // 'name', 'firstName', 'lastName', 'phoneNum', 'ageType', 'country', 'zipCode, 'state', 'city', 'addressLine1', 'addressLine2',
 
@@ -66,6 +66,5 @@ export function findMsgByErrorCode (code, message) {
 			msg.reason = message;
 			break;
 	}
-	msg.reason = msg.reason;
 	return msg;
 }

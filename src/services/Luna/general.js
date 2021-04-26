@@ -18,23 +18,23 @@ const GeneralService = {
 	}, res => res.settings.localeInfo), // subscribable
 	// luna-send -n 1 luna://com.webos.settingsservice/setSystemSettings '{ "settings": { "localeInfo": { "locales": { "UI": "en-US" } } } }'
 	setLocaleInfo: ({locale, keyboards, ...rest}) => {
-		console.log('locale',locale,'keyboards',keyboards);
+		// console.log('locale', locale, 'keyboards', keyboards);
 		const param = {
 			settings: {
 				localeInfo: {
-					locales: {},
+					locales: {}
 				}
 			}
 		};
 		if (locale) param.settings.localeInfo['locales'] = {UI:locale};
 		if (keyboards) param.settings.localeInfo['keyboards'] = keyboards;
-		console.log('param',param);
+		// console.log('param', param);
 
 		return luna('com.webos.settingsservice', 'setSystemSettings', param)(rest);
 	},
 	getFromSettingsService: ({subscribe, category, key, ...rest}) => {
 		let params = {
-			category: category || "",
+			category: category || '',
 			key: key,
 			subscribe: subscribe
 		};
@@ -42,7 +42,7 @@ const GeneralService = {
 	},
 	setToSettingsService: ({name, category, value, ...rest}) => {
 		let params = {
-			category: category || "",
+			category: category || '',
 			settings: {}
 		};
 		params.settings[name] = value;
@@ -64,7 +64,7 @@ const GeneralService = {
 	},
 	// Supports: {'useNetworkTime':<boolean>}
 	setNetworkTime: luna('com.webos.service.systemservice', 'setPreferences'),
-	
+
 	// support params
 	// {
 	// 	useNetworkTime: <boolean>,
@@ -102,18 +102,18 @@ const GeneralService = {
 		key: 'timeZone'
 	}),
 	createToast: luna('com.webos.notification', 'createToast'),
-    setAutomaticUpdate: ({flag, ...rest}) => {
-        const settings = {AutoSWUpdate: (flag)?"On":"Off"};
-        luna('com.webos.settingsservice', 'setSystemSettings', {
-            settings
-        })(rest);
-    },
-    getAutomaticUpdate: luna('com.webos.settingsservice', 'getSystemSettings', {
-        key: 'AutoSWUpdate'
-    }, res => ({
-        returnValue: true,
-        AutoSWUpdate: (res.settings.AutoSWUpdate == 'On')? true: false
-    }))
+	setAutomaticUpdate: ({flag, ...rest}) => {
+		const settings = {AutoSWUpdate: (flag) ? 'On' : 'Off'};
+		luna('com.webos.settingsservice', 'setSystemSettings', {
+			settings
+		})(rest);
+	},
+	getAutomaticUpdate: luna('com.webos.settingsservice', 'getSystemSettings', {
+		key: 'AutoSWUpdate'
+	}, res => ({
+		returnValue: true,
+		AutoSWUpdate: (res.settings.AutoSWUpdate === 'On')
+	}))
 };
 
 export default GeneralService;

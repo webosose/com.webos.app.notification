@@ -1,9 +1,9 @@
 import luna from './request';
 
 const AudioService = {
-    setSoundToSettingsService: ({name, value, displayId, ...rest}) => {
+	setSoundToSettingsService: ({name, value, displayId, ...rest}) => {
 		let params = {
-			category: "Session" + displayId,
+			category: 'Session' + displayId,
 			settings: {}
 		};
 		params.settings[name] = value;
@@ -12,15 +12,15 @@ const AudioService = {
 	},
 	getSoundsFromSettingsService: ({displayId, subscribe, ...rest}) => {
 		let params = {
-			category: "Session" + displayId,
+			category: 'Session' + displayId,
 			keys: ['Volume', 'MediaVolume', 'SoundEffectVolume'],
 			subscribe: subscribe
 		};
 		return luna('com.webos.settingsservice', 'getSystemSettings', params)(rest);
-    },
-    getSoundFromSettingsService: ({displayId, subscribe, key, ...rest}) => {
+	},
+	getSoundFromSettingsService: ({displayId, subscribe, key, ...rest}) => {
 		let params = {
-			category: "Session" + displayId,
+			category: 'Session' + displayId,
 			key: key,
 			subscribe: subscribe
 		};
@@ -28,12 +28,12 @@ const AudioService = {
 	},
 	getEffectVolume: luna('com.webos.service.audio', 'notification/getVolume'),
 	setEffectVolume: luna('com.webos.service.audio', 'notification/setVolume'),
-    getMediaVolume: luna('com.webos.service.audio', 'media/getVolume'),
-    setMediaVolume: luna('com.webos.service.audio', 'media/setVolume'),
-    getMasterVolume: luna('com.webos.service.audio', 'master/getVolume'),
-    setMasterVolume: luna('com.webos.service.audio', 'master/setVolume', {
-        soundOutput:"alsa"
-    })
+	getMediaVolume: luna('com.webos.service.audio', 'media/getVolume'),
+	setMediaVolume: luna('com.webos.service.audio', 'media/setVolume'),
+	getMasterVolume: luna('com.webos.service.audio', 'master/getVolume'),
+	setMasterVolume: luna('com.webos.service.audio', 'master/setVolume', {
+		soundOutput:'alsa'
+	})
 };
 
 

@@ -31,22 +31,22 @@ class AppBase extends React.Component {
 	static propTypes = {
 		alertInfo: PropTypes.object,
 		notification: PropTypes.object,
-		onPushAlertNotification: PropTypes.func,
 		onHideAllNotification: PropTypes.func,
 		onHideNotification: PropTypes.func,
+		onPushAlertNotification: PropTypes.func,
 		onPushNotification: PropTypes.func,
 		onTimer: PropTypes.func
-	}
+	};
 
 	componentDidMount () {
-		console.log("display - " + getDisplayAffinity());
+		// console.log('display - ' + getDisplayAffinity());
 		subscribedLunaServiceList.forEach(service => {
 			const method = Notification[service.method];
 
 			if (!requests[service.method]) {
 				requests[service.method] = method({
 					onSuccess: (param) => {
-						if (getDisplayAffinity() !== ((param && param.hasOwnProperty('displayId')) ? param['displayId'] : 0)) {
+						if (getDisplayAffinity() !== ((param && param.Object.prototype.hasOwnProperty.call('displayId')) ? param['displayId'] : 0)) {
 							return;
 						}
 						const text = param && param[service.keyValue] || '';
@@ -101,11 +101,11 @@ class AppBase extends React.Component {
 			requests['getAlertNotification'] = Notification.getAlertNotification({
 				subscribe: true,
 				onSuccess: (response) => {
-					if (!(response.returnValue) || !(response.hasOwnProperty('alertInfo'))) {
+					if (!(response.returnValue) || !(response.Object.prototype.hasOwnProperty.call('alertInfo'))) {
 						return;
 					}
 					const alertInfo = response.alertInfo;
-					if (getDisplayAffinity() !== ((alertInfo && alertInfo.hasOwnProperty('displayId')) ? alertInfo['displayId'] : 0)) {
+					if (getDisplayAffinity() !== ((alertInfo && alertInfo.Object.prototype.hasOwnProperty.call('displayId')) ? alertInfo['displayId'] : 0)) {
 						return;
 					}
 					if (document.hidden) {
@@ -127,7 +127,7 @@ class AppBase extends React.Component {
 
 	componentWillUnmount () {
 		// Notification.cancelAllRequests();
-		console.log("componentWillUnmount");
+		// console.log('componentWillUnmount');
 		subscribedLunaServiceList.forEach(service => {
 			cancelRequest(service.method);
 		});
@@ -144,17 +144,17 @@ class AppBase extends React.Component {
 		} else {
 			console.error('The luna service data is not valid.'); // eslint-disable-line no-console
 		}
-	}
+	};
 
 	handleFailure = (err) => {
 		console.error(err); // eslint-disable-line no-console
-	}
+	};
 
 	cbTimeout = () => {
 		this.props.onHideNotification();
 
 		this.props.onTimer({cbTimeout: this.cbTimeout});
-	}
+	};
 
 	render () {
 		const
@@ -174,15 +174,15 @@ class AppBase extends React.Component {
 
 		for (const key in notification) {
 			notificationControls.push(
-				<NotificationContainer key={notification[key].key} index={notification[key].key}/>
+				<NotificationContainer key={notification[key].key} index={notification[key].key} />
 			);
 		}
 
 		for (const key in alertInfo) {
 			alertInfoList.push(
-				<AlertPopup key={alertInfo[key].alertId} alertId={alertInfo[key].alertId}/>
+				<AlertPopup key={alertInfo[key].alertId} alertId={alertInfo[key].alertId} />
 			);
-			console.log("alertInfoList length = " + alertInfoList.length);
+			// console.log('alertInfoList length = ' + alertInfoList.length);
 		}
 
 		return (
