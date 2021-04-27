@@ -3,7 +3,7 @@ import Skinnable from '@enact/agate/Skinnable';
 import kind from '@enact/core/kind';
 import {Row, Cell} from '@enact/ui/Layout';
 import PropTypes from 'prop-types';
-import React from 'react';
+// import React from 'react';
 
 import css from './NotificationControl.module.less';
 

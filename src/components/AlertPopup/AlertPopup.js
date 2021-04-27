@@ -5,7 +5,7 @@ import $L from '@enact/i18n/$L/$L';
 import Group from '@enact/ui/Group';
 import kind from '@enact/core/kind';
 import ri from '@enact/ui/resolution';
-import React from 'react';
+// import React from 'react';
 import PropTypes from 'prop-types';
 
 import css from './AlertPopup.module.less';
