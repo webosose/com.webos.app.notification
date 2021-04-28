@@ -46,7 +46,7 @@ class AppBase extends React.Component {
 			if (!requests[service.method]) {
 				requests[service.method] = method({
 					onSuccess: (param) => {
-						if (getDisplayAffinity() !== ((param && param.Object.prototype.hasOwnProperty.call('displayId')) ? param['displayId'] : 0)) {
+						if (getDisplayAffinity() !== ((param && Object.prototype.hasOwnProperty.call(param,'displayId')) ? param['displayId'] : 0)) {
 							return;
 						}
 						const text = param && param[service.keyValue] || '';
@@ -101,11 +101,11 @@ class AppBase extends React.Component {
 			requests['getAlertNotification'] = Notification.getAlertNotification({
 				subscribe: true,
 				onSuccess: (response) => {
-					if (!(response.returnValue) || !(response.Object.prototype.hasOwnProperty.call('alertInfo'))) {
+					if (!(response.returnValue) || !(Object.prototype.hasOwnProperty.call(response,'alertInfo'))) {
 						return;
 					}
 					const alertInfo = response.alertInfo;
-					if (getDisplayAffinity() !== ((alertInfo && alertInfo.Object.prototype.hasOwnProperty.call('displayId')) ? alertInfo['displayId'] : 0)) {
+					if (getDisplayAffinity() !== ((alertInfo && Object.prototype.hasOwnProperty.call(alertInfo,'displayId')) ? alertInfo['displayId'] : 0)) {
 						return;
 					}
 					if (document.hidden) {

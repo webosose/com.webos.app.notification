@@ -82,7 +82,7 @@ const AlertPopupDecorator = ConsumerDecorator({
 				return;
 			}
 			let action = state.app.alertInfo[alertId].buttons[ev.selected].action;
-			if (typeof action === 'object' && action.Object.prototype.hasOwnProperty.call('serviceURI') && action.Object.prototype.hasOwnProperty.call('serviceMethod')) {
+			if (typeof action === 'object' && Object.prototype.hasOwnProperty.call(action,'serviceURI') && Object.prototype.hasOwnProperty.call(action,'serviceMethod')) {
 				/* eslint-disable-next-line no-console */
 				console.log('api call: ' + action.serviceURI + action.serviceMethod);
 			}
