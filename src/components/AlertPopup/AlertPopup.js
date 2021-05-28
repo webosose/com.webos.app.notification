@@ -87,9 +87,9 @@ const AlertPopupDecorator = ConsumerDecorator({
 				console.log('api call: ' + action.serviceURI + action.serviceMethod);
 			}
 			// close & delete popup
-			update((updateState) => {
-				delete updateState.app.alertInfo[alertId];
-				if (typeof updateState.app.alertInfo.length === 'undefined') {
+			update((state) => {
+				delete state.app.alertInfo[alertId];
+				if (typeof state.app.alertInfo.length === 'undefined') {
 					window.close();
 				}
 			});

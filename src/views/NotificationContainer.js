@@ -70,11 +70,11 @@ const NotificationContainerDecorator = compose(
 					}
 
 					if (cntNotificationLeft === 0) {
-						update(updateState => {
+						update(state => {
 							if (state.app.timerId) {
 								// console.log('clearTimeout & make timerId null');
-								clearTimeout(updateState.app.timerId);
-								updateState.app.timerId = null;
+								clearTimeout(state.app.timerId);
+								state.app.timerId = null;
 							}
 						});
 						window.close();
