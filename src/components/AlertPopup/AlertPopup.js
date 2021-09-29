@@ -1,5 +1,9 @@
+/* eslint-disable  no-console */
+/* eslint-disable no-shadow */
+
 import LabeledIconButton from '@enact/agate/LabeledIconButton';
 import PopupMenu from '@enact/agate/PopupMenu';
+import LS2Request from '@enact/webos/LS2Request';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import $L from '@enact/i18n/$L/$L';
 import Group from '@enact/ui/Group';
@@ -84,7 +88,13 @@ const AlertPopupDecorator = ConsumerDecorator({
 			let action = state.app.alertInfo[alertId].buttons[ev.selected].action;
 			if (typeof action === 'object' && Object.prototype.hasOwnProperty.call(action,'serviceURI') && Object.prototype.hasOwnProperty.call(action,'serviceMethod')) {
 				/* eslint-disable-next-line no-console */
-				console.log('api call: ' + action.serviceURI + action.serviceMethod);
+				console.log('Api call: ' + action.serviceURI + action.serviceMethod);
+				const req = new LS2Request();
+				req.send({
+					service: action.serviceURI,
+					method: action.serviceMethod,
+					parameters: Object.assign({}, action.launchParams)
+				});			
 			}
 			// close & delete popup
 			update((state) => {
