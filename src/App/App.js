@@ -19,9 +19,10 @@ import initialState from './initialState';
 
 import css from './App.module.less';
 import AlertPopup from '../components/AlertPopup';
+import normalLog from '../Util/normalLog';
 
 const subscribedLunaServiceList = [
-	{method: 'getToastNotification', keyValue: 'message'}
+	{ method: 'getToastNotification', keyValue: 'message' }
 ];
 
 const delayToHideForFirstNotification = 5000; // ms
@@ -38,21 +39,21 @@ class AppBase extends React.Component {
 		onTimer: PropTypes.func
 	};
 
-	componentDidMount () {
+	componentDidMount() {
 		// console.log('display - ' + getDisplayAffinity());
 		subscribedLunaServiceList.forEach(service => {
 			const method = Notification[service.method];
-
 			if (!requests[service.method]) {
 				requests[service.method] = method({
 					onSuccess: (param) => {
-						if (getDisplayAffinity() !== ((param && Object.prototype.hasOwnProperty.call(param,'displayId')) ? param['displayId'] : 0)) {
+						normalLog("Notification App...Notification");
+						if (getDisplayAffinity() !== ((param && Object.prototype.hasOwnProperty.call(param, 'displayId')) ? param['displayId'] : 0)) {
 							return;
 						}
 						const text = param && param[service.keyValue] || '';
-
+						normalLog("Notification App...text"+text)
 						if (text !== '') {
-							return this.handleSuccess({text});
+							return this.handleSuccess({ text });
 						} else {
 							return true;
 						}
@@ -101,31 +102,38 @@ class AppBase extends React.Component {
 			requests['getAlertNotification'] = Notification.getAlertNotification({
 				subscribe: true,
 				onSuccess: (response) => {
-					if (!(response.returnValue) || !(Object.prototype.hasOwnProperty.call(response,'alertInfo'))) {
+					normalLog("Notification App...getAlertNotification")
+					if (!(response.returnValue) || !(Object.prototype.hasOwnProperty.call(response, 'alertInfo'))) {
 						return;
 					}
 					const alertInfo = response.alertInfo;
-					if (getDisplayAffinity() !== ((alertInfo && Object.prototype.hasOwnProperty.call(alertInfo,'displayId')) ? alertInfo['displayId'] : 0)) {
+					if (getDisplayAffinity() !== ((alertInfo && Object.prototype.hasOwnProperty.call(alertInfo, 'displayId')) ? alertInfo['displayId'] : 0)) {
 						return;
 					}
-					if (document.hidden) {
-						Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
-					}
-					// handle alert action - close
-					// update state to hidden and delete for matched alertId
-
-					this.props.onPushAlertNotification({
+					normalLog("Notification App  document.hidden "+document.hidden);
+					const aletNoti = {
 						alertId: alertInfo.alertId,
 						message: alertInfo.message,
 						buttons: alertInfo.buttons
-					});
+					}
+					if (document.hidden) {
+						Application.launch({
+							id: 'com.webos.app.notification', params: { displayAffinity: getDisplayAffinity() }, onSuccess: () => {
+								normalLog("Notification App...Launch Success"+document.hidden);
+								this.props.onPushAlertNotification(aletNoti);
+							}
+						});
+					} else {
+						this.props.onPushAlertNotification(aletNoti);
+					}
+					// handle alert action - close
+					// update state to hidden and delete for matched alertId
 				},
 				onFailure: this.handleFailure
 			});
 		}
 	}
-
-	componentWillUnmount () {
+	componentWillUnmount() {
 		// Notification.cancelAllRequests();
 		// console.log('componentWillUnmount');
 		subscribedLunaServiceList.forEach(service => {
@@ -134,13 +142,13 @@ class AppBase extends React.Component {
 		cancelRequest('getAlertNotification');
 	}
 
-	handleSuccess = ({text}) => {
+	handleSuccess = ({ text }) => {
 		if (document.hidden) {
-			Application.launch({id: 'com.webos.app.notification', params:{displayAffinity: getDisplayAffinity()}});
+			Application.launch({ id: 'com.webos.app.notification', params: { displayAffinity: getDisplayAffinity() } });
 		}
 
 		if (text) {
-			this.props.onPushNotification({text, cbTimeout: this.cbTimeout});
+			this.props.onPushNotification({ text, cbTimeout: this.cbTimeout });
 		} else {
 			console.error('The luna service data is not valid.'); // eslint-disable-line no-console
 		}
@@ -153,10 +161,10 @@ class AppBase extends React.Component {
 	cbTimeout = () => {
 		this.props.onHideNotification();
 
-		this.props.onTimer({cbTimeout: this.cbTimeout});
+		this.props.onTimer({ cbTimeout: this.cbTimeout });
 	};
 
-	render () {
+	render() {
 		const
 			{
 				notification,
@@ -216,17 +224,17 @@ const AppDecorator = compose(
 			});
 		},
 		handlers: {
-			onHideAllNotification: (ev, props, {update}) => {
+			onHideAllNotification: (ev, props, { update }) => {
 				update(state => {
 					for (const key in state.app.notification) {
 						state.app.notification[key].visible = false;
 					}
 				});
 			},
-			onPushNotification: ({text, cbTimeout}, props,  {update}) => {
+			onPushNotification: ({ text, cbTimeout }, props, { update }) => {
 				update(state => {
 					const key = window.performance.now() + '';
-					state.app.notification[key] = {key, visible: false, text};
+					state.app.notification[key] = { key, visible: false, text };
 
 					if (state.app.timerId) {
 						clearTimeout(state.app.timerId);
@@ -236,7 +244,7 @@ const AppDecorator = compose(
 					state.app.timerId = setTimeout(cbTimeout, delayToHideForFirstNotification);
 				});
 			},
-			onHideNotification: (context, props, {update}) => {
+			onHideNotification: (context, props, { update }) => {
 				update(state => {
 					let cntNotificationLeft = 0;
 
@@ -262,19 +270,19 @@ const AppDecorator = compose(
 					}
 				});
 			},
-			onTimer: ({cbTimeout}, props, {update}) => {
+			onTimer: ({ cbTimeout }, props, { update }) => {
 				update(state => {
 					state.app.timerId = setTimeout(cbTimeout, delayToHide);
 				});
 			},
-			onPushAlertNotification: (ev, props, {update}) => {
-				let {alertId, message, buttons} = ev;
+			onPushAlertNotification: (ev, props, { update }) => {
+				let { alertId, message, buttons } = ev;
 				update(state => {
-					state.app.alertInfo[alertId] = {alertId, message, buttons, visible: true};
+					state.app.alertInfo[alertId] = { alertId, message, buttons, visible: true };
 				});
 			}
 		},
-		mapStateToProps: ({app}) => ({
+		mapStateToProps: ({ app }) => ({
 			notification: app.notification,
 			alertInfo: app.alertInfo
 		})

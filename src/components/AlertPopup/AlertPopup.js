@@ -57,7 +57,6 @@ const AlertPopupBase = kind({
 			margin: '0 auto',
 			fontSize: ri.scale(42)
 		};
-
 		return (
 			<PopupMenu skinVariants="night" open {...rest} css={css} className={css.title} title={$L('Alert')}>
 				<Group
