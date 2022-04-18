@@ -5,6 +5,7 @@ import compose from 'ramda/src/compose';
 import React from 'react';
 
 import NotificationControl from '../components/NotificationControl';
+import checkPopupStatus from '../Util/util';
 
 import css from './NotificationContainer.module.less';
 
@@ -77,7 +78,7 @@ const NotificationContainerDecorator = compose(
 								state.app.timerId = null;
 							}
 						});
-						window.close();
+						checkPopupStatus(state.app);
 					}
 				});
 			},

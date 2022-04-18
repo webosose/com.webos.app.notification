@@ -13,6 +13,7 @@ import ri from '@enact/ui/resolution';
 import PropTypes from 'prop-types';
 
 import css from './AlertPopup.module.less';
+import checkPopupStatus from '../../Util/util';
 
 const SharedIconButtonProps = {backgroundOpacity: 'lightOpaque', inline: true, size: 'huge'};
 
@@ -93,14 +94,12 @@ const AlertPopupDecorator = ConsumerDecorator({
 					service: action.serviceURI,
 					method: action.serviceMethod,
 					parameters: Object.assign({}, action.launchParams)
-				});			
+				});
 			}
 			// close & delete popup
 			update((state) => {
 				delete state.app.alertInfo[alertId];
-				if (typeof state.app.alertInfo.length === 'undefined') {
-					window.close();
-				}
+				checkPopupStatus(state.app);
 			});
 		}
 	},
