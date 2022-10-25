@@ -239,9 +239,12 @@ const AppDecorator = compose(
 					if (state.app.timerId) {
 						clearTimeout(state.app.timerId);
 						state.app.timerId = null;
+						if(state.app.notification[state.app.timerIdkey]){
+							state.app.notification[state.app.timerIdkey].visible = false;
+						}
 					}
-
 					state.app.timerId = setTimeout(cbTimeout, delayToHideForFirstNotification);
+					state.app.timerIdkey = key;
 				});
 			},
 			onHideNotification: (context, props, { update }) => {

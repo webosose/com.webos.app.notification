@@ -37,7 +37,6 @@ class NotificationContainerBase extends React.Component {
 		delete rest.onHideNotification;
 		delete rest.onPopNotification;
 		delete rest.onShowNotification;
-
 		return (
 			<Transition
 				className={css.notificationContainerTransition}
@@ -84,6 +83,9 @@ const NotificationContainerDecorator = compose(
 			},
 			onShowNotification: ({index}, props, {update}) => {
 				update(state => {
+					// Object.keys(state.app.notification).forEach(key=>{
+					// 	state.app.notification[key].visible = false;
+					// });
 					state.app.notification[index].visible = true;
 				});
 			}
