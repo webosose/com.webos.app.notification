@@ -1,11 +1,8 @@
-import Icon from '@enact/agate/Icon';
-import Skinnable from '@enact/agate/Skinnable';
+import Icon from '@enact/sandstone/Icon';
 import kind from '@enact/core/kind';
 import {Row, Cell} from '@enact/ui/Layout';
 import PropTypes from 'prop-types';
-// import React from 'react';
-
-import css from './NotificationControl.module.less';
+import css from './AlertText.module.less';
 
 const Text = ({children}) => {
 	return (
@@ -17,7 +14,7 @@ const Text = ({children}) => {
 	);
 };
 
-const NotificationControlBase = kind({
+const AlertText = kind({
 	name: 'NotificationControl',
 
 	propTypes: {
@@ -43,11 +40,4 @@ const NotificationControlBase = kind({
 		);
 	}
 });
-
-const NotificationControl = Skinnable(NotificationControlBase);
-
-export default NotificationControl;
-export {
-	NotificationControl,
-	NotificationControlBase
-};
+export default AlertText;

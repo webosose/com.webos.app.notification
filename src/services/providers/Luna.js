@@ -12,13 +12,13 @@ const handler = (callback, map = fwd) => callback && (res => {
 	}
 });
 
-const luna =  (
-		service,
-		method,
-		{subscribe = false, timeout = 0, ...params} = {},
-		map
+const luna = (
+	service,
+	method,
+	{ subscribe = false, timeout = 0, ...params } = {},
+	map
 ) => (
-	({onSuccess, onFailure, onTimeout, onComplete, ...additionalParams} = {}) => {
+	({ onSuccess, onFailure, onTimeout, onComplete, ...additionalParams } = {}) => {
 		const req = new LS2Request();
 		req.send({
 			service: 'luna://' + service,
@@ -35,5 +35,14 @@ const luna =  (
 	}
 );
 
-export default luna;
-export {luna};
+const LunaProvider = {
+
+	getAlertNotification: luna('com.webos.notification', 'getAlertNotification'),
+	getToastNotification: luna('com.webos.notification', 'getToastNotification'),
+
+	// Application Handling
+	launch: luna('com.webos.service.applicationmanager', 'launch')
+};
+
+export default LunaProvider;
+export { LunaProvider };
