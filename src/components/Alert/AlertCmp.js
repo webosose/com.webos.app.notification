@@ -13,19 +13,21 @@ const AlertCmp = ({ alertId, message, buttons }) => {
   const buttonClickHandler = useCallback((event) => {
     let buttonIndex = event.currentTarget.getAttribute("buttonindex");
     if (buttons.length > buttonIndex) {
-      const { serviceURI, serviceMethod, launchParams } = buttons[parseInt(buttonIndex)].action;
-      const req = new LS2Request();
-      req.send({
-        service: serviceURI,
-        method: serviceMethod,
-        parameters: Object.assign({}, launchParams),
-        onSuccess: () => {
-          // console.log("res ::",res);
-        },
-        onFailure: (error) => {
-          console.log("error ::", error);
-        }
-      });
+      const action = buttons[parseInt(buttonIndex)].action;
+      if(action){
+        const req = new LS2Request();
+        req.send({
+          service: action.serviceURI,
+          method: action.serviceMethod,
+          parameters: Object.assign({}, action.launchParams),
+          onSuccess: () => {
+            // console.log("res ::",res);
+          },
+          onFailure: (error) => {
+            console.log("error ::", error);
+          }
+        });
+      }
       setTimeout(() => {
         dispatch({ type: REMOVE_ALERT, alertId });
         if (alerts.length === 1 && toasts.length === 0) {
