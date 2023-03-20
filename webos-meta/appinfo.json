@@ -10,6 +10,7 @@
   "largeIcon": "icon-large.png",
   "transparent": true,
   "defaultWindowType": "system_ui",
+  "enableBackgroundRun":true,
   "visible": false,
   "noSplashOnLaunch": true,
   "lockable": false,
